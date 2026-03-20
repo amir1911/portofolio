@@ -130,7 +130,7 @@ export default function Home() {
         <div className="md:hidden relative z-10 flex flex-col min-h-screen">
           <div
             className="w-full flex-shrink-0 overflow-hidden pt-16"
-            style={{ height: "90vh", touchAction: "none" }}
+            style={{ height: "85vh", touchAction: "none" }}
           >
             <Lanyard position={[0, 0, 22]} gravity={[0, -40, 0]} />
           </div>
@@ -411,7 +411,7 @@ export default function Home() {
                       </p>
                     </div>
                     <span className="ml-auto text-white/20 group-hover:text-[#F1FF5E] group-hover:translate-x-1 transition-all duration-300 shrink-0">
-                      →
+                      
                     </span>
                   </a>
                 ))}
@@ -425,7 +425,7 @@ export default function Home() {
           {/* FOOTER */}
           <div className="mt-20 sm:mt-24 border-t border-white/10 pt-6 text-center">
             <p className="text-white/30 text-xs sm:text-sm font-mono">
-              © 2024 <span className="text-[#F1FF5E]">Amirullah</span> — Junior Web Developer
+              © 2026 <span className="text-[#F1FF5E]">Amirullah</span> — Junior Web Developer
             </p>
           </div>
 
