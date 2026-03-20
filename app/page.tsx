@@ -251,9 +251,9 @@ export default function Home() {
         {/* ===== TECH STACK — full width ===== */}
         <div className="relative z-10 w-full mb-20 sm:mb-24 md:mb-28">
           <AnimatedContent>
-            <h3 className="text-center text-xl sm:text-2xl md:text-3xl font-semibold text-white/70 mb-8">
-              Tech Stack
-            </h3>
+            <h1 className="text-center text-xl sm:text-2xl md:text-3xl font-semibold text-white mb-8">
+              Tools and technologies I use
+            </h1>
           </AnimatedContent>
 
           <div className="relative w-full overflow-hidden">
