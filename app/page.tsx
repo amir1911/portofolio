@@ -116,13 +116,10 @@ export default function Home() {
       {/* ================= HERO ================= */}
       <section id="home" className="relative min-h-screen overflow-x-hidden bg-[#1C0770]">
         <div className="absolute inset-0 z-0">
-          <ShapeGrid
+         <ShapeGrid
             speed={0.5}
-            size={40}
             direction="diagonal"
             borderColor="#271E37"
-            hoverColor="#694b9c"
-            shape="square"
           />
           <div className="absolute inset-0 bg-black/40" />
         </div>
@@ -263,24 +260,24 @@ export default function Home() {
             <div className="absolute left-0 top-0 h-full w-24 bg-gradient-to-r from-black to-transparent z-10 pointer-events-none" />
             <div className="absolute right-0 top-0 h-full w-24 bg-gradient-to-l from-black to-transparent z-10 pointer-events-none" />
             <LogoLoop
-              logos={techLogos}
-              speed={80}
-              direction="left"
-              logoHeight={72}
-              gap={24}
-              width="100%"
-              hoverSpeed={20}
-              scaleOnHover
-              ariaLabel="Technology stack"
-              renderItem={(item, key) => (
-                <div
-                  key={key}
-                  className="flex items-center justify-center w-16 h-16 rounded-2xl bg-white/5 border border-purple-500/40 shadow-[0_0_12px_2px_rgba(139,92,246,0.25)] text-white/80 hover:border-purple-400 hover:bg-white/10 hover:shadow-[0_0_20px_4px_rgba(139,92,246,0.5)] transition-all duration-300"
-                >
-                  {item.img}
-                </div>
-              )}
-            />
+  logos={techLogos as any[]}   // ← tambahkan as any[]
+  speed={80}
+  direction="left"
+  logoHeight={72}
+  gap={24}
+  width="100%"
+  hoverSpeed={20}
+  scaleOnHover
+  ariaLabel="Technology stack"
+  renderItem={(item: any, key) => (
+  <div
+    key={key}
+    className="flex items-center justify-center w-16 h-16 rounded-2xl bg-white/5 border border-purple-500/40 shadow-[0_0_12px_2px_rgba(139,92,246,0.25)] text-white/80 hover:border-purple-400 hover:bg-white/10 hover:shadow-[0_0_20px_4px_rgba(139,92,246,0.5)] transition-all duration-300"
+  >
+    {item.img}
+  </div>
+)}
+/>
           </div>
         </div>
 

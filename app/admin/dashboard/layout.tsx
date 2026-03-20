@@ -42,8 +42,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     router.push("/admin");
   }
 
-  const currentPage = navLinks.find((l) => l.pathname === pathname) ?? navLinks.find((l) => pathname.startsWith(l.href));
-
+  const currentPage =
+  navLinks.find((l) => l.href === pathname) ??
+  navLinks.find((l) => pathname.startsWith(l.href));
   return (
     <div className="min-h-screen bg-[#0a0a0f] text-white flex">
 
