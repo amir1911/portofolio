@@ -15,7 +15,6 @@ import {
 import { MeshLineGeometry, MeshLineMaterial } from 'meshline';
 import * as THREE from 'three';
 
-// replace with your own imports, see the usage snippet for details
 const cardGLB = "/assets/lanyard/card.glb";
 const lanyard = "/assets/lanyard/lanyard.png";
 
@@ -55,34 +54,10 @@ export default function Lanyard({
           <Band isMobile={isMobile} />
         </Physics>
         <Environment blur={0.75}>
-          <Lightformer
-            intensity={2}
-            color="white"
-            position={[0, -1, 5]}
-            rotation={[0, 0, Math.PI / 3]}
-            scale={[100, 0.1, 1]}
-          />
-          <Lightformer
-            intensity={3}
-            color="white"
-            position={[-1, -1, 1]}
-            rotation={[0, 0, Math.PI / 3]}
-            scale={[100, 0.1, 1]}
-          />
-          <Lightformer
-            intensity={3}
-            color="white"
-            position={[1, 1, 1]}
-            rotation={[0, 0, Math.PI / 3]}
-            scale={[100, 0.1, 1]}
-          />
-          <Lightformer
-            intensity={10}
-            color="white"
-            position={[-10, 0, 14]}
-            rotation={[0, Math.PI / 2, Math.PI / 3]}
-            scale={[100, 10, 1]}
-          />
+          <Lightformer intensity={2} color="white" position={[0, -1, 5]} rotation={[0, 0, Math.PI / 3]} scale={[100, 0.1, 1]} />
+          <Lightformer intensity={3} color="white" position={[-1, -1, 1]} rotation={[0, 0, Math.PI / 3]} scale={[100, 0.1, 1]} />
+          <Lightformer intensity={3} color="white" position={[1, 1, 1]} rotation={[0, 0, Math.PI / 3]} scale={[100, 0.1, 1]} />
+          <Lightformer intensity={10} color="white" position={[-10, 0, 14]} rotation={[0, Math.PI / 2, Math.PI / 3]} scale={[100, 10, 1]} />
         </Environment>
       </Canvas>
     </div>
@@ -96,7 +71,6 @@ interface BandProps {
 }
 
 function Band({ maxSpeed = 50, minSpeed = 0, isMobile = false }: BandProps) {
-  // Using "any" for refs since the exact types depend on Rapier's internals
   const band = useRef<any>(null);
   const fixed = useRef<any>(null);
   const j1 = useRef<any>(null);
@@ -120,8 +94,12 @@ function Band({ maxSpeed = 50, minSpeed = 0, isMobile = false }: BandProps) {
   const { nodes, materials } = useGLTF(cardGLB) as any;
   const texture = useTexture(lanyard);
   const [curve] = useState(
-    () =>
-      new THREE.CatmullRomCurve3([new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()])
+    () => new THREE.CatmullRomCurve3([
+      new THREE.Vector3(),
+      new THREE.Vector3(),
+      new THREE.Vector3(),
+      new THREE.Vector3()
+    ])
   );
   const [dragged, drag] = useState<false | THREE.Vector3>(false);
   const [hovered, hover] = useState(false);
@@ -129,17 +107,12 @@ function Band({ maxSpeed = 50, minSpeed = 0, isMobile = false }: BandProps) {
   useRopeJoint(fixed, j1, [[0, 0, 0], [0, 0, 0], 1]);
   useRopeJoint(j1, j2, [[0, 0, 0], [0, 0, 0], 1]);
   useRopeJoint(j2, j3, [[0, 0, 0], [0, 0, 0], 1]);
-  useSphericalJoint(j3, card, [
-    [0, 0, 0],
-    [0, 1.45, 0]
-  ]);
+  useSphericalJoint(j3, card, [[0, 0, 0], [0, 1.45, 0]]);
 
   useEffect(() => {
     if (hovered) {
       document.body.style.cursor = dragged ? 'grabbing' : 'grab';
-      return () => {
-        document.body.style.cursor = 'auto';
-      };
+      return () => { document.body.style.cursor = 'auto'; };
     }
   }, [hovered, dragged]);
 
@@ -159,10 +132,7 @@ function Band({ maxSpeed = 50, minSpeed = 0, isMobile = false }: BandProps) {
       [j1, j2].forEach(ref => {
         if (!ref.current.lerped) ref.current.lerped = new THREE.Vector3().copy(ref.current.translation());
         const clampedDistance = Math.max(0.1, Math.min(1, ref.current.lerped.distanceTo(ref.current.translation())));
-        ref.current.lerped.lerp(
-          ref.current.translation(),
-          delta * (minSpeed + clampedDistance * (maxSpeed - minSpeed))
-        );
+        ref.current.lerped.lerp(ref.current.translation(), delta * (minSpeed + clampedDistance * (maxSpeed - minSpeed)));
       });
       curve.points[0].copy(j3.current.translation());
       curve.points[1].copy(j2.current.lerped);
@@ -228,7 +198,9 @@ function Band({ maxSpeed = 50, minSpeed = 0, isMobile = false }: BandProps) {
         </RigidBody>
       </group>
       <mesh ref={band}>
+        {/* @ts-expect-error meshline custom element */}
         <meshLineGeometry />
+        {/* @ts-expect-error meshline custom element */}
         <meshLineMaterial
           color="white"
           depthTest={false}

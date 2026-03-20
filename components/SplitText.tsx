@@ -44,7 +44,6 @@ const SplitText: React.FC<SplitTextProps> = ({
   const onCompleteRef = useRef(onLetterAnimationComplete);
   const [fontsLoaded, setFontsLoaded] = useState<boolean>(false);
 
-  // Keep callback ref updated
   useEffect(() => {
     onCompleteRef.current = onLetterAnimationComplete;
   }, [onLetterAnimationComplete]);
@@ -62,7 +61,6 @@ const SplitText: React.FC<SplitTextProps> = ({
   useGSAP(
     () => {
       if (!ref.current || !text || !fontsLoaded) return;
-      // Prevent re-animation if already completed
       if (animationCompletedRef.current) return;
       const el = ref.current as HTMLElement & {
         _rbsplitInstance?: GSAPSplitText;
@@ -164,7 +162,8 @@ const SplitText: React.FC<SplitTextProps> = ({
       willChange: 'transform, opacity'
     };
     const classes = `split-parent overflow-hidden inline-block whitespace-normal ${className}`;
-    const Tag = (tag || 'p') as React.ElementType;
+    // cast to any agar TypeScript tidak komplain soal ref dan children
+    const Tag = (tag || 'p') as any;
 
     return (
       <Tag ref={ref} style={style} className={classes}>
