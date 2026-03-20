@@ -1,65 +1,404 @@
-import Image from "next/image";
+"use client";
 
+import { useEffect, useState } from "react";
+import Lanyard from "@/components/Lanyard";
+import SplitText from "@/components/SplitText";
+import AnimatedContent from "@/components/AnimatedContent";
+import ShapeGrid from "@/components/ShapeGrid";
+import ProfileCard from "@/components/ProfileCard";
+import DarkVeil from "@/components/DarkVeil";
+import BorderGlow from "@/components/BorderGlow";
+import Navbar from "@/components/Navbar";
+import LogoLoop from "@/components/LogoLoop";
+import { supabase } from "@/lib/supabase";
+import ContactForm from "@/components/ContactForm";
+import {
+  SiTailwindcss, SiReact, SiHtml5, SiLaravel, SiMysql, SiPhp,
+  SiFlutter, SiGithub, SiCanva,
+} from "react-icons/si";
+import { FaCss3Alt, FaFigma } from "react-icons/fa";
+
+// ── Types ──────────────────────────────────────────────
+type Project = {
+  id: string;
+  title: string;
+  description: string;
+  img: string;
+  url_website?: string;
+  url_github?: string;
+};
+
+type Contact = {
+  id: string;
+  icon: string;
+  label: string;
+  value: string;
+  href: string;
+};
+
+type About = {
+  name: string;
+  title: string;
+  bio: string;
+  avatar_url: string;
+};
+
+// ── Tech logos (static) ────────────────────────────────
+const techLogos = [
+  { img: <SiTailwindcss size={40} />, alt: "Tailwind CSS" },
+  { img: <SiGithub size={40} />, alt: "GitHub" },
+  { img: <SiReact size={40} />, alt: "React" },
+  { img: <SiHtml5 size={40} />, alt: "HTML5" },
+  { img: <FaCss3Alt size={40} />, alt: "CSS3" },
+  { img: <SiLaravel size={40} />, alt: "Laravel" },
+  { img: <SiMysql size={40} />, alt: "MySQL" },
+  { img: <SiPhp size={40} />, alt: "PHP" },
+  { img: <SiFlutter size={40} />, alt: "Flutter" },
+  { img: <SiCanva size={40} />, alt: "Canva" },
+  { img: <FaFigma size={40} />, alt: "Figma" },
+];
+
+// ── Fallback data ──────────────────────────────────────
+const fallbackProjects: Project[] = [
+  { id: "1", img: "/assets/profile/amir1.jpeg", title: "Website Organization", description: "Dashboard admin & manajemen anggota" },
+  { id: "2", img: "/assets/project/project2.png", title: "To-Do App", description: "Aplikasi tugas dengan drag & drop" },
+  { id: "3", img: "/assets/project/project3.png", title: "Music App", description: "Aplikasi pencarian lagu & lirik" },
+];
+
+const fallbackContacts: Contact[] = [
+  { id: "1", icon: "✉️", label: "Email", value: "amirullah@email.com", href: "mailto:amirullah@email.com" },
+  { id: "2", icon: "💼", label: "LinkedIn", value: "linkedin.com/in/amirullah", href: "https://linkedin.com/in/amirullah" },
+  { id: "3", icon: "🐙", label: "GitHub", value: "github.com/amirullah", href: "https://github.com/amirullah" },
+  { id: "4", icon: "📱", label: "WhatsApp", value: "+62 812-xxxx-xxxx", href: "https://wa.me/62812xxxxxxxx" },
+];
+
+const fallbackAbout: About = {
+  name: "Amirullah",
+  title: "Junior Web Developer",
+  bio: "Halo! Saya Amirullah, seorang Junior Web Developer yang fokus pada pengembangan web modern.",
+  avatar_url: "/assets/profile/amir1.jpeg",
+};
+
+// ══════════════════════════════════════════════════════
 export default function Home() {
+  const [projects, setProjects] = useState<Project[]>(fallbackProjects);
+  const [contacts, setContacts] = useState<Contact[]>(fallbackContacts);
+  const [about, setAbout] = useState<About>(fallbackAbout);
+
+  useEffect(() => {
+    async function fetchData() {
+      const [{ data: projectsData }, { data: contactsData }, { data: aboutData }] =
+        await Promise.all([
+          supabase.from("projects").select("*").order("created_at", { ascending: false }),
+          supabase.from("contacts").select("*"),
+          supabase.from("about").select("*").limit(1).single(),
+        ]);
+      if (projectsData && projectsData.length > 0) setProjects(projectsData);
+      if (contactsData && contactsData.length > 0) setContacts(contactsData);
+      if (aboutData) setAbout(aboutData);
+    }
+    fetchData();
+  }, []);
+
+  const navItems = [
+    { label: "Home", href: "#home" },
+    { label: "About", href: "#about" },
+    { label: "Project", href: "#project" },
+    { label: "Contact", href: "#contact" },
+  ];
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="bg-[#1C0770] text-white">
+
+      {/* ================= NAVBAR ================= */}
+      <Navbar items={navItems} />
+
+      {/* ================= HERO ================= */}
+      <section id="home" className="relative min-h-screen overflow-x-hidden bg-[#1C0770]">
+        <div className="absolute inset-0 z-0">
+          <ShapeGrid
+            speed={0.5}
+            size={40}
+            direction="diagonal"
+            borderColor="#271E37"
+            hoverColor="#694b9c"
+            shape="square"
+          />
+          <div className="absolute inset-0 bg-black/40" />
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+
+        <div className="relative z-10 mx-auto min-h-screen px-4 sm:px-6 md:px-10 flex items-center">
+          <div className="grid grid-cols-1 md:grid-cols-12 w-full gap-8 md:gap-10 py-20 md:py-0">
+
+            {/* LEFT */}
+            <AnimatedContent className="col-span-1 md:col-span-6 flex items-center justify-center md:justify-start text-center md:text-left order-2 md:order-1">
+              <div className="flex flex-col gap-4 sm:gap-6 items-center md:items-start">
+
+                <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 sm:gap-3">
+                  <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold">Halo</h1>
+                  <button className="px-3 sm:px-4 py-1 bg-[#F1FF5E] text-black rounded-lg text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold hover:scale-110 hover:rotate-1 transition-all duration-300">
+                    Welcome
+                  </button>
+                </div>
+
+                <div className="flex flex-col items-center md:items-start mt-2 sm:mt-4">
+                  <SplitText
+                    text="Portofolio Amirullah"
+                    className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-white"
+                  />
+                  <SplitText
+                    text="Junior Web Developer"
+                    className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-semibold text-[#F1FF5E] mt-2"
+                  />
+                </div>
+
+                <div className="mt-4 sm:mt-6 flex flex-wrap justify-center md:justify-start gap-3 sm:gap-4">
+                  <a
+                    href="/cv-amirullah.pdf"
+                    download
+                    className="px-4 sm:px-5 py-2 bg-[#F1FF5E] text-black font-semibold rounded-lg text-sm sm:text-base hover:shadow-[0_0_25px_#F1FF5E] hover:scale-105 transition-all duration-300"
+                  >
+                    Download CV
+                  </a>
+                  <a
+                    href="#contact"
+                    className="px-4 sm:px-5 py-2 border border-white text-white font-semibold rounded-lg text-sm sm:text-base hover:bg-white hover:text-black hover:scale-105 transition-all duration-300"
+                  >
+                    Hubungi Saya
+                  </a>
+                </div>
+
+              </div>
+            </AnimatedContent>
+
+            {/* RIGHT — Lanyard */}
+            <div className="col-span-1 md:col-span-6 flex items-center justify-center order-1 md:order-2 max-h-[45vh] sm:max-h-[55vh] md:max-h-none">
+              <div className="w-[200px] sm:w-[260px] md:w-[300px] lg:w-auto">
+                <Lanyard position={[0, 0, 15]} gravity={[0, -40, 0]} />
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* ================= ABOUT + PROJECT + CONTACT ================= */}
+      <section id="about" className="relative py-16 sm:py-20 md:py-24 overflow-hidden bg-black">
+
+        {/* Background */}
+        <div className="absolute inset-0 z-0">
+          <DarkVeil speed={0.1} warpAmount={5} />
+          <div className="absolute inset-0 bg-black/40" />
+        </div>
+
+        {/* ===== ABOUT ===== */}
+        <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 md:px-8">
+          <AnimatedContent>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-10 sm:mb-14 md:mb-16">
+              About <span className="text-[#F1FF5E]">Me</span>
+            </h2>
+          </AnimatedContent>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 sm:gap-12 md:gap-14 items-center mb-12 sm:mb-16">
+
+            <AnimatedContent className="flex justify-center">
+              <div className="hover:scale-105 transition duration-500 scale-90 sm:scale-100 origin-top">
+                <ProfileCard
+                  name={about.name}
+                  title={about.title}
+                  handle="amirrrrrr_1"
+                  status="Online"
+                  contactText="Contact Me"
+                  avatarUrl={about.avatar_url}
+                  miniAvatarUrl="/assets/profile/amir2.jpeg"
+                  showUserInfo
+                  enableTilt
+                  enableMobileTilt
+                  iconUrl="/assets/demo/iconpattern.png"
+                  behindGlowEnabled
+                  behindGlowColor="hsla(219, 100%, 70%, 0.6)"
+                  innerGradient="linear-gradient(145deg,hsla(219, 40%, 45%, 0.55) 0%,hsla(165, 60%, 70%, 0.27) 100%)"
+                />
+              </div>
+            </AnimatedContent>
+
+            <AnimatedContent className="text-center md:text-left px-2 sm:px-0">
+              <p className="text-white/80 text-base sm:text-lg mb-3 sm:mb-4">
+                Halo! Saya{" "}
+                <span className="text-[#F1FF5E] font-semibold">{about.name}</span>,
+                seorang {about.title} yang fokus pada pengembangan web modern.
+              </p>
+              <p className="text-white/80 text-base sm:text-lg mb-3 sm:mb-4">
+                {about.bio}
+              </p>
+              <p className="text-white/80 text-base sm:text-lg">
+                Saya juga tertarik pada UI/UX agar produk tidak hanya berfungsi,
+                tetapi juga nyaman digunakan.
+              </p>
+
+              <div className="mt-5 sm:mt-6 flex flex-wrap gap-2 sm:gap-3 justify-center md:justify-start">
+                {["React", "Next.js", "PHP", "MySQL"].map((skill) => (
+                  <span
+                    key={skill}
+                    className="px-3 sm:px-4 py-1 bg-white/10 rounded-lg text-xs sm:text-sm hover:bg-[#F1FF5E] hover:text-black transition-all duration-300"
+                  >
+                    {skill}
+                  </span>
+                ))}
+              </div>
+            </AnimatedContent>
+
+          </div>
+        </div>
+
+        {/* ===== TECH STACK — full width ===== */}
+        <div className="relative z-10 w-full mb-20 sm:mb-24 md:mb-28">
+          <AnimatedContent>
+            <h3 className="text-center text-xl sm:text-2xl md:text-3xl font-semibold text-white/70 mb-8">
+              Tech Stack
+            </h3>
+          </AnimatedContent>
+
+          <div className="relative w-full overflow-hidden">
+            <div className="absolute left-0 top-0 h-full w-24 bg-gradient-to-r from-black to-transparent z-10 pointer-events-none" />
+            <div className="absolute right-0 top-0 h-full w-24 bg-gradient-to-l from-black to-transparent z-10 pointer-events-none" />
+            <LogoLoop
+              logos={techLogos}
+              speed={80}
+              direction="left"
+              logoHeight={72}
+              gap={24}
+              width="100%"
+              hoverSpeed={20}
+              scaleOnHover
+              ariaLabel="Technology stack"
+              renderItem={(item, key) => (
+                <div
+                  key={key}
+                  className="flex items-center justify-center w-16 h-16 rounded-2xl bg-white/5 border border-purple-500/40 shadow-[0_0_12px_2px_rgba(139,92,246,0.25)] text-white/80 hover:border-purple-400 hover:bg-white/10 hover:shadow-[0_0_20px_4px_rgba(139,92,246,0.5)] transition-all duration-300"
+                >
+                  {item.img}
+                </div>
+              )}
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+          </div>
         </div>
-      </main>
+
+        {/* ===== PROJECT + CONTACT + FOOTER ===== */}
+        <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 md:px-8">
+
+          {/* ===== PROJECT ===== */}
+          <div id="project" className="mb-20 sm:mb-24 md:mb-28">
+            <AnimatedContent>
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-10 sm:mb-14 md:mb-16">
+                My <span className="text-[#F1FF5E]">Projects</span>
+              </h2>
+            </AnimatedContent>
+
+            <AnimatedContent>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 sm:gap-6 md:gap-8">
+                {projects.map((item) => (
+                  <BorderGlow key={item.id} borderRadius={20}>
+                    <div className="relative overflow-hidden rounded-xl group cursor-pointer">
+                      <img
+                        src={item.img}
+                        alt={item.title}
+                        className="w-full h-48 sm:h-56 md:h-64 object-cover transition duration-500 group-hover:scale-110"
+                      />
+                      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition duration-500 flex flex-col justify-end p-4 sm:p-5">
+                        <h3 className="text-base sm:text-lg font-bold text-[#F1FF5E] translate-y-6 group-hover:translate-y-0 transition">
+                          {item.title}
+                        </h3>
+                        <p className="text-xs sm:text-sm text-white/80 mt-2 translate-y-6 group-hover:translate-y-0 transition delay-100">
+                          {item.description}
+                        </p>
+                        <div className="flex gap-3 mt-3 sm:mt-4 translate-y-6 group-hover:translate-y-0 transition delay-200">
+                          {item.url_website && (
+                            <a
+                              href={item.url_website}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="px-3 py-1 rounded-lg bg-[#F1FF5E] text-black text-xs font-bold hover:shadow-[0_0_12px_#F1FF5E] transition-all"
+                            >
+                              🌐 Website
+                            </a>
+                          )}
+                          {item.url_github && (
+                            <a
+                              href={item.url_github}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="px-3 py-1 rounded-lg bg-white/10 border border-white/20 text-white text-xs font-medium hover:bg-white/20 transition-all"
+                            >
+                              🐙 GitHub
+                            </a>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </BorderGlow>
+                ))}
+              </div>
+            </AnimatedContent>
+          </div>
+
+          {/* ===== CONTACT ===== */}
+          <div id="contact">
+            <AnimatedContent>
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-4">
+                Get In <span className="text-[#F1FF5E]">Touch</span>
+              </h2>
+              <p className="text-white/50 text-center text-sm sm:text-base mb-10 sm:mb-14">
+                Punya project atau pertanyaan? Jangan ragu untuk menghubungi saya.
+              </p>
+            </AnimatedContent>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-14 items-start">
+
+              {/* CONTACT INFO */}
+              <AnimatedContent className="flex flex-col gap-4">
+                {contacts.map((item) => (
+                  <a
+                    key={item.id}
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-4 p-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-[#F1FF5E]/40 hover:translate-x-1 transition-all duration-300 group"
+                  >
+                    <span className="text-xl sm:text-2xl">{item.icon}</span>
+                    <div className="min-w-0">
+                      <p className="text-white/40 text-[10px] sm:text-xs font-medium uppercase tracking-widest">
+                        {item.label}
+                      </p>
+                      <p className="text-white text-sm sm:text-base font-semibold truncate group-hover:text-[#F1FF5E] transition-colors duration-300">
+                        {item.value}
+                      </p>
+                    </div>
+                    <span className="ml-auto text-white/20 group-hover:text-[#F1FF5E] group-hover:translate-x-1 transition-all duration-300 shrink-0">
+                      →
+                    </span>
+                  </a>
+                ))}
+              </AnimatedContent>
+
+              {/* FORM */}
+              <AnimatedContent>
+                <ContactForm />
+              </AnimatedContent>
+
+            </div>
+          </div>
+
+          {/* ===== FOOTER ===== */}
+          <div className="mt-20 sm:mt-24 border-t border-white/10 pt-6 text-center">
+            <p className="text-white/30 text-xs sm:text-sm font-mono">
+              © 2024 <span className="text-[#F1FF5E]">Amirullah</span> — Junior Web Developer
+            </p>
+          </div>
+
+        </div>
+      </section>
+
     </div>
   );
 }
